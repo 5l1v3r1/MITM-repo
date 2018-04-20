@@ -6,7 +6,7 @@ import menu
 
 def http_assembler(pcap_file, path):
     pictures_directory = path
-    pcap_file = re.search(r"(?:.*/)(.*)(?=)", pcap_file).group(1)
+    pcap_file = re.search(r"(?:.*/)(.*)(?=)", pcap_file).group(0)
     carved_images  = 0
     dupes = []
 
@@ -36,20 +36,21 @@ def http_assembler(pcap_file, path):
                         condition_jpeg = bytes("image/jpeg", "utf8") in encoded or bytes("image/jpg", "utf8") in encoded
                         condition_png = bytes("image/png", "utf8") in encoded
                         condition_gif = bytes("image/gif", "utf8") in encoded
-                        condition_gzip = bytes("gzip\r\n\r\n", "utf8") in encoded
+                        condition_gzip = bytes("gzip", "utf8") in encoded
 
                         if condition_a: # if headers
-                            if condition_jpeg:
-                                image_payload += encoded[encoded.find(bytes("g\r\n\r\n", "utf8")) + 5:]
-                            if condition_png:
-                                image_payload += encoded[encoded.find(bytes("png\r\n\r\n", "utf8")) + 7:]
-                            if condition_gif:
-                                image_payload += encoded[encoded.find(bytes("gif\r\n\r\n", "utf8")) + 7:]
-                            if condition_gzip:
- #########################################print("dang") # *******************fix here!!!
-                                image_payload += encoded[encoded.find(bytes("gzip\r\n\r\n", "utf8")) + 8:]
-                            if not condition_gif and not condition_png and not condition_jpeg and bytes("Content-Type: image", "utf8") in encoded:
-                                print("\t\t[***] Possible error when extracting an image.")
+                            image_payload += encoded[encoded.find(bytes("\r\n\r\n", "utf8")) + 4:]
+                            # if condition_jpeg:
+                            #     image_payload += encoded[encoded.find(bytes("g\r\n\r\n", "utf8")) + 5:]
+                            # if condition_png:
+                            #     image_payload += encoded[encoded.find(bytes("png\r\n\r\n", "utf8")) + 7:]
+                            # if condition_gif:
+                            #     image_payload += encoded[encoded.find(bytes("gif\r\n\r\n", "utf8")) + 7:]
+                            # if condition_gzip:
+                            #     #print("dang") # *******************fix here!!!
+                            #     image_payload += encoded[encoded.find(bytes("Content-Encoding: gzip\r\n\r\n", "utf8")) + 26:]
+                            # if not condition_gif and not condition_png and not condition_jpeg and bytes("Content-Type: image", "utf8") in encoded:
+                            #     print("\t\t[***] Possible error when extracting an image.")
 
                         if condition_b: # if html
                             if bytes("</html>\r\n", "utf8") in encoded:
@@ -76,10 +77,12 @@ def http_assembler(pcap_file, path):
 
         image,image_type = extract_image(headers,image_payload)
 
-        if image is not None and image_type is not None:
+        if (image is not None) and (image_type is not None) and ("gif" not in image_type) and "charset" not in image_type :
+            #and (b"Content-Type" not in image or b"Content-Encoding" not in image):# and \
 
-            file_name = "7-%d.%s" % (carved_images,image_type)
 
+            file_name = "extractedImage-%d.%s" % (carved_images,image_type)
+            #print(file_name)
             fd = open("%s/%s" % (pictures_directory,file_name),"wb")
 
             fd.write(image)
@@ -111,6 +114,7 @@ def extract_image(headers,http_payload):
     try:
         if "image" in headers['Content-Type']:
             image_type = headers['Content-Type'].split("/")[1]
+            print(image_type)
             image = http_payload
 
             try:
@@ -147,3 +151,4 @@ def carver_input():
 
     menu.a_thing_that_makes_it_loop()
 
+carver_input()

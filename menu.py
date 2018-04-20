@@ -9,13 +9,14 @@ import carver
 import sys
 import os
 
+
 def a_thing_that_makes_it_loop():
     functionality_screen()
     opt = int(user_input())
     choice_forwarder(opt)
 
-def welcome():
 
+def welcome():
     print("""
                              ####         ####
                             # /\ #########/ \ #     
@@ -34,17 +35,20 @@ def welcome():
                     | |    | |  | |     | |    | |    | |
                     |_|    |_|  |_|     |_|    |_|    |_|
             ############______by Joanna Orlowska______#############
-    
+
     """)
+
 
 def user_input():
     try:
         if sys.version_info[0] < 3:
             return int(raw_input("[>] Opt: "))
-        else: return int(input("[>] Opt: "))
+        else:
+            return int(input("[>] Opt: "))
     except:
         x = user_input()
         choice_forwarder(x)
+
 
 def functionality_screen():
     print("# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #")
@@ -58,15 +62,15 @@ def functionality_screen():
     print("[+] 7: EXIT.")
     print("-------------------------------------------------------------------")
 
-def choice_forwarder(opt):
 
+def choice_forwarder(opt):
     while opt != 7:
         if opt == 0:
             print("[+] Installing requirements: ")
             try:
                 os.system("pip install -r requirements.txt")
-            except: ## Can add anther try statement here for permissions? or if apt not used? other os?
-                os.system("sudo apt-get install pip") ## possible trouble with sudo permissions?
+            except:  ## Can add anther try statement here for permissions? or if apt not used? other os?
+                os.system("sudo apt-get install pip")  ## possible trouble with sudo permissions?
                 os.system("pip install -r requirements.txt")
             a_thing_that_makes_it_loop()
 
@@ -77,8 +81,8 @@ def choice_forwarder(opt):
             print("[+] Packets: ")
             sniff_func.sniffer()
 
-        elif opt == 3 :
-             arp_poison.arp_poison()
+        elif opt == 3:
+            arp_poison.arp_poison()
 
         elif opt == 4:
             extract.extract_info_from_pacp()
@@ -94,13 +98,13 @@ def choice_forwarder(opt):
             functionality_screen()
             opt = user_input()
             choice_forwarder(opt)
-            #/root/PycharmProjects/MITM/menu.py
+            # /root/PycharmProjects/MITM/menu.py
 
     print("\n\n\n                                                 bye.\n")
     sys.exit(0)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     welcome()
     functionality_screen()
     opt = int(user_input())

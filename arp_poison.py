@@ -2,9 +2,10 @@ from scapy.all import *
 import sys, threading
 import extract, ratio, sniff_func, menu
 
-spoof = True
+
 
 def arp_poison():
+    spoof = True
     print("             ############__________ARP_Poisoning_________############")
 
     try:
@@ -29,10 +30,10 @@ def arp_poison():
         if gateway_ip is "": gateway_ip = "192.168.43.1"
         if interface is "": interface = "wlo1"
         if packet_count is "" : packet_count = 4999
-        if flag == "": flag = False
+        if flag is not ("y" or "yes" or "YES" or "Y"): flag = False
         else: flag = True
-        if fratio == "": fratio = False
-        else: fratio = True
+        if fratio is ("y" or "yes" or "YES" or "Y"): fratio = True
+        else: fratio = False
         if file == "" : file = "/home/jo/Desktop/capture1.pcap"
         packet_count = int(packet_count)
 
